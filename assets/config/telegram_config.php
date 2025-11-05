@@ -7,6 +7,6 @@
 define('TELEGRAM_BOT_TOKEN', '8310315205:AAEDfY0nwuSeC_G6l2hXzbRY2xzvAHNJYvQ');
 
 // Reemplaza 'TU_CHAT_ID_AQUI' con el ID del chat o grupo de Telegram.
-define('TELEGRAM_CHAT_ID', '-4875193224');
+define('TELEGRAM_CHAT_ID', '-5094257923');
 
 ?>
