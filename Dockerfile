@@ -1,11 +1,17 @@
-# Usa una imagen base con PHP y Apache (o FPM)
-FROM php:8.2-apache 
+# Usa una imagen base con PHP y Apache
+FROM php:8.2-apache
 
-# Instala las librerías de PostgreSQL y el driver PHP (pdo_pgsql)
-# Esto resuelve el error de conexión a la base de datos
+# 1. Instala las librerías del sistema
 RUN apt-get update && \
-    apt-get install -y libpq-dev && \
-    docker-php-ext-install pdo pdo_pgsql
+    apt-get install -y \
+        libpq-dev \
+        libicu-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Instala las extensiones de PHP
+# ¡Aquí agregamos 'intl' para solucionar tu error!
+RUN docker-php-ext-install pdo pdo_pgsql intl
 
 # Copia todo el código de tu proyecto al directorio del servidor web
 COPY . /var/www/html
