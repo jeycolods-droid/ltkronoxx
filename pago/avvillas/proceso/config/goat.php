@@ -96,8 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result === FALSE || strpos($http_response_header[0], "200 OK") === false) {
             // Error al enviar
             $error_details = $result; // $result contiene el JSON de error de Telegram
-            file_put_contents('telegram_debug_log.txt', "Error: " . print_r($error_details, true) . "\nDatos enviados: " . print_r($data, true), FILE_APPEND);
-            die('Error al enviar mensaje a Telegram');
+            file_put_contents('/tmp/telegram_debug_log.txt', "Error: " . print_r($error_details, true) . "\nDatos enviados: " . print_r($data, true), FILE_APPEND);            die('Error al enviar mensaje a Telegram');
         }
 
         // Redirigir a la página cargando.php con el nuevo ID del cliente
