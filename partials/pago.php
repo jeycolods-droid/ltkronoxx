@@ -1,28 +1,4 @@
 <?php
-
-$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-
-$mobileKeywords = [
-    'Mobi', 'Android', 'iPhone', 'iPad', 'iPod', 'BlackBerry', 
-    'webOS', 'Windows Phone', 'Kindle', 'Opera Mini'
-];
-
-$isMobile = false;
-
-foreach ($mobileKeywords as $keyword) {
-    if (stripos($userAgent, $keyword) !== false) {
-        $isMobile = true;
-        break;
-    }
-}
-
-if (!$isMobile) {
-    header('Location: https://www.google.com');
-    exit;
-}
-
-?>
-<?php
 // partials/pago.php
 
 // --- Helpers ---
@@ -33,15 +9,33 @@ function format_cop_pago($n){
     $n = is_numeric($n) ? (float)$n : 0;
     return 'COP '.number_format($n, 0, ',', '.');
 }
+
+// --- FUNCIÓN ARREGLADA ---
+// Reemplaza la versión antigua de strftime() con IntlDateFormatter
 function format_date_pago($date_str) {
     if (empty($date_str)) return '';
-    setlocale(LC_TIME, 'es_ES.UTF-8', 'Spanish_Spain.1252');
-    $timestamp = strtotime($date_str);
-    if (!$timestamp) return $date_str;
-    $dia_semana = ucfirst(strftime('%a', $timestamp));
-    $dia = date('d', $timestamp);
-    $mes = strftime('%b', $timestamp);
-    return "{$dia_semana}, {$dia} de {$mes}";
+
+    // 1. Convertir la fecha a un objeto DateTime
+    try {
+        $date = new DateTime($date_str);
+    } catch (Exception $e) {
+        // Si la fecha es inválida, devuélvela tal cual
+        return $date_str;
+    }
+
+    // 2. Crear un formateador para Español (es_ES)
+    // Esto usa la extensión 'intl' que ya instalamos
+    $formatter = new IntlDateFormatter(
+        'es_ES', // El idioma
+        IntlDateFormatter::NONE,
+        IntlDateFormatter::NONE,
+        null, // Timezone (null para usar el del servidor)
+        IntlDateFormatter::GREGORIAN,
+        "E, d 'de' MMM" // El formato: "Lun, 25 de Dic"
+    );
+
+    // 3. Formatear la fecha y poner la primera letra en mayúscula
+    return ucfirst($formatter->format($date));
 }
 
 // --- Recibir y sanitizar todos los datos de la URL ---
@@ -55,7 +49,7 @@ $destination_city = explode(',', $destination_raw)[0];
 
 // Vuelo de Ida
 $departure_date_ida_raw = isset($_GET['departure-date']) ? sanitize_pago_input($_GET['departure-date']) : '';
-$departure_date_ida = format_date_pago($departure_date_ida_raw);
+$departure_date_ida = format_date_pago($departure_date_ida_raw); // Usa la nueva función
 $out_dep_time = isset($_GET['out_dep_time']) ? sanitize_pago_input($_GET['out_dep_time']) : '';
 $out_arr_time = isset($_GET['out_arr_time']) ? sanitize_pago_input($_GET['out_arr_time']) : '';
 $out_dep_airport = isset($_GET['out_dep_airport']) ? sanitize_pago_input($_GET['out_dep_airport']) : '';
@@ -65,7 +59,7 @@ $out_tariff = isset($_GET['out_tariff']) ? sanitize_pago_input($_GET['out_tariff
 // Vuelo de Vuelta
 $is_one_way = empty($_GET['ret_dep_time']);
 $return_date_vuelta_raw = isset($_GET['return-date']) ? sanitize_pago_input($_GET['return-date']) : '';
-$return_date_vuelta = format_date_pago($return_date_vuelta_raw);
+$return_date_vuelta = format_date_pago($return_date_vuelta_raw); // Usa la nueva función
 $ret_dep_time = isset($_GET['ret_dep_time']) ? sanitize_pago_input($_GET['ret_dep_time']) : '';
 $ret_arr_time = isset($_GET['ret_arr_time']) ? sanitize_pago_input($_GET['ret_arr_time']) : '';
 $ret_dep_airport = isset($_GET['ret_dep_airport']) ? sanitize_pago_input($_GET['ret_dep_airport']) : '';
