@@ -1,0 +1,607 @@
+/* =========================================================
+   Estilos para la sección de tarifas expandida
+   ========================================================= */
+
+:root {
+  /* ... (otras variables existentes) ... */
+  --full-tariff-dot-color: #E03A8D; /* Nuevo: Color para el punto de tarifa Full */
+  --basic-tariff-dot-color: #2563EB; /* Nuevo: Color para el punto de tarifa Basic */
+  --light-tariff-dot-color: #047857; /* Nuevo: Color para el punto de tarifa Light */
+
+  /* Nuevas variables para el degradado de Premium Economy */
+  --premium-economy-gradient-start: #5b2e90; /* Color inicial del degradado */
+  --premium-economy-gradient-end: #8a3ab8; /* Color final del degradado */
+  --premium-economy-text: #ffffff; /* Color del texto para Premium Economy */
+}
+
+.flight-details-expanded {
+  padding: 0 16px; /* Adjust padding to match the card body */
+  background-color: var(--bg-results);
+  border-top: 1px solid var(--border-color);
+  padding-top: 0;
+  padding-bottom: 0;
+  max-height: 0;
+  overflow: hidden; /* This keeps vertical overflow hidden for collapsed state */
+  opacity: 0;
+  transition: max-height 0.5s ease-out, opacity 0.3s ease-out, padding 0.5s ease-out;
+}
+
+/* Expanded state */
+.flight-card.expanded .flight-details-expanded {
+  max-height: 2000px; /* Large enough to contain all content */
+  opacity: 1;
+  padding: 20px 16px; /* Padding when visible */
+  transition: max-height 0.5s ease-in, opacity 0.3s ease-in 0.2s, padding 0.5s ease-in;
+}
+
+/* Hide divider lines when card is expanded */
+.flight-card.expanded .flight-card-body::after,
+.flight-card.expanded .flight-card-footer::before {
+  display: none;
+}
+
+
+.expanded-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap; /* Allows wrapping */
+  gap: 10px; /* Spacing between elements */
+}
+
+.aircraft-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.aircraft-info img {
+  height: 16px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.tariff-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.close-expanded-btn {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+.close-expanded-btn:hover {
+  background-color: rgba(220, 38, 38, 0.1); /* Example solid color */
+}
+
+
+.tariff-cards-container {
+  /* Default for desktop */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.tariff-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color); /* Mantener el borde exterior de la tarjeta */
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; /* Changed to column to stack header, body, footer */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative; /* Necesario para posicionar el tag de Premium Economy */
+}
+.tariff-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Estilo para el tag "Cabina Premium Economy" */
+.premium-economy-tag {
+  position: absolute;
+  top: -15px; /* Ajusta esto para posicionarlo correctamente */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffff;
+  color: var(--premium-economy-bg);
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+
+.tariff-card-header {
+  background-color: #ffffff; /* Fondo blanco para todos los títulos */
+  color: var(--text-color); /* Títulos en negro */
+  font-weight: 700; /* Títulos en negrita */
+  padding: 12px 15px 12px 25px; /* Ajustado padding-left para la media esfera */
+  font-size: 1rem;
+  text-align: left; /* Alineado a la izquierda por defecto */
+  border-bottom: none; /* Eliminado el borde inferior del header */
+  display: flex; /* Para alinear el punto con el texto */
+  align-items: center; /* Centrar verticalmente el punto */
+  position: relative; /* Para posicionar el pseudo-elemento */
+  overflow: hidden; /* Para recortar la media esfera */
+}
+
+/* Pseudo-elemento para la media esfera de color */
+.tariff-card-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0; /* Empieza desde el borde del cuadro */
+  transform: translateY(-50%) translateX(-50%); /* Centra y desplaza para que sea media esfera */
+  width: 20px; /* Diámetro del círculo */
+  height: 20px;
+  border-radius: 50%; /* Para que sea un círculo */
+  z-index: 0; /* Detrás del texto */
+}
+
+/* Colores específicos para los puntos de cada tarifa */
+.tariff-card.basic-tariff .tariff-card-header::before {
+  background-color: var(--basic-tariff-dot-color);
+}
+.tariff-card.light-tariff .tariff-card-header::before {
+  background-color: var(--light-tariff-dot-color);
+}
+.tariff-card.full-tariff .tariff-card-header::before {
+  background-color: var(--full-tariff-dot-color);
+}
+
+/* Specific style for Premium Economy */
+.tariff-card.premium-tariff {
+  background-image: linear-gradient(to bottom, var(--premium-economy-gradient-start), var(--premium-economy-gradient-end)); /* Degradado */
+  border-color: var(--premium-economy-gradient-start); /* Borde que coincide con el inicio del degradado */
+  box-shadow: 0 4px 10px rgba(91, 46, 144, 0.2);
+}
+.tariff-card.premium-tariff .tariff-card-header {
+  background-color: transparent; /* Fondo transparente para que se vea el degradado de la tarjeta */
+  color: var(--premium-economy-text); /* Texto blanco para Premium Economy */
+  padding-top: 25px; /* Ajuste para el tag superior */
+}
+/* Ocultar la media esfera para Premium Economy */
+.tariff-card.premium-tariff .tariff-card-header::before {
+  display: none;
+}
+
+/* Styles for Basic, Light, and Full headers (now text is black) */
+.tariff-card.basic-tariff .tariff-card-header,
+.tariff-card.light-tariff .tariff-card-header,
+.tariff-card.full-tariff .tariff-card-header {
+  /* No es necesario sobrescribir el background-color aquí, ya está blanco en .tariff-card-header */
+  color: var(--text-color); /* Texto negro */
+}
+
+
+.tariff-card-body {
+  padding: 15px;
+  flex-grow: 1; /* Allows body to take available space and push footer down */
+}
+.tariff-card-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tariff-card-body ul li {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  margin-bottom: 5px; /* Ajustado para un espaciado más compacto */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Ajuste de color para los iconos de check en Premium Economy */
+.tariff-card.premium-tariff .tariff-card-body ul li {
+  color: var(--premium-economy-text); /* Texto blanco para Premium Economy */
+}
+.tariff-card.premium-tariff .tariff-card-body .icon-check {
+  color: var(--premium-economy-text); /* Icono blanco en Premium Economy */
+}
+/* Check and cross icons (default) */
+.tariff-card-body .icon-check { color: #047857; font-size: 1.1em; }
+.tariff-card-body .icon-cross { color: #DC2626; font-size: 1.1em; }
+
+
+.tariff-card-footer {
+  padding: 15px;
+  /* Alineación a la izquierda */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinea los elementos a la izquierda */
+  gap: 0; /* Eliminado el gap para agrupar los textos de precio */
+  border-top: none; /* Eliminado el borde superior del footer */
+}
+.tariff-card-footer .price-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 5px; /* Espacio después del precio */
+  margin-bottom: 0; /* Asegura que no haya margen inferior */
+}
+.tariff-card-footer .price-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--brand-purple);
+  margin-bottom: 0; /* Eliminado el margen inferior para agrupar */
+}
+.tariff-card.premium-tariff .tariff-card-footer .price-value {
+  color: var(--premium-economy-text); /* Precio blanco para Premium Economy */
+}
+.tariff-card-footer .tax-info {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0; /* Asegura que no haya margen superior */
+  margin-bottom: 15px; /* Espacio para separar de "Más detalles" */
+}
+.tariff-card.premium-tariff .tariff-card-footer .price-label,
+.tariff-card.premium-tariff .tariff-card-footer .tax-info {
+  color: var(--premium-economy-text); /* Texto blanco para Premium Economy */
+}
+
+.tariff-card-footer .details-link {
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  margin-top: 0; /* Asegura que no haya margen superior */
+  margin-bottom: 10px; /* Mantener margen inferior para separar del botón */
+}
+.tariff-card.premium-tariff .tariff-card-footer .details-link {
+  color: var(--premium-economy-text); /* Enlace blanco para Premium Economy */
+}
+
+.choose-tariff-btn {
+  background-color: #fff; /* Fondo blanco para los botones por defecto */
+  color: var(--accent-color); /* Texto rojo por defecto */
+  border: 1px solid var(--accent-color); /* Borde rojo por defecto */
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, color 0.2s ease, border-color 0.2s ease;
+  width: 100%;
+}
+.choose-tariff-btn:hover {
+  background-color: var(--accent-color); /* Fondo rojo al pasar el ratón */
+  color: #fff; /* Texto blanco al pasar el ratón */
+  transform: translateY(-1px);
+}
+.choose-tariff-btn:active {
+  transform: translateY(0);
+}
+
+/* Estilo específico para el botón de Premium Economy */
+.tariff-card.premium-tariff .choose-tariff-btn {
+  background-color: #ffffff; /* Fondo blanco */
+  color: var(--premium-economy-gradient-start); /* Texto púrpura oscuro */
+  border: 1px solid var(--premium-economy-gradient-start); /* Borde púrpura oscuro */
+}
+.tariff-card.premium-tariff .choose-tariff-btn:hover {
+  background-color: var(--premium-economy-gradient-start); /* Fondo púrpura oscuro al pasar el ratón */
+  color: #fff; /* Texto blanco al pasar el ratón */
+  border-color: var(--premium-economy-gradient-start);
+}
+
+
+/* Responsiveness for tariff cards */
+@media (max-width: 1024px) {
+  .tariff-cards-container {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  /* Make the flight-card a grid container when expanded */
+  .flight-card.expanded {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column */
+    /* Define rows for header, body, footer, and expanded details */
+    grid-template-rows: auto auto auto auto; /* Header | Body | Footer | Expanded */
+  }
+
+  /* Explicitly place each section in its grid row */
+  .flight-card.expanded .flight-card-header {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .flight-card.expanded .flight-card-body {
+    grid-row: 2;
+    grid-column: 1;
+    display: grid !important; /* Re-apply its original mobile grid layout */
+    grid-template-areas: "time-start duration time-end";
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 31px 16px 8px;
+    column-gap: 10px;
+    border-bottom: none !important;
+  }
+
+  .flight-card.expanded .flight-card-footer {
+    grid-row: 3;
+    grid-column: 1;
+    display: grid !important; /* Re-apply its original mobile grid layout */
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "stops price"
+      "oper  price";
+    grid-auto-rows: min-content;
+    align-items: start;
+    row-gap: 6px;
+    column-gap: 12px;
+    padding: 10px 16px 12px;
+    font-size: .85rem;
+    color: var(--text-muted);
+    position: relative; /* Needed for ::before pseudo-element */
+  }
+
+  .flight-details-expanded {
+    grid-row: 4; /* Place it in the fourth row */
+    grid-column: 1; /* Occupy the first column */
+    /* Other existing styles for expanded state apply */
+  }
+
+  .expanded-header {
+    flex-direction: column; /* Column in mobile to stack properly */
+    align-items: flex-start; /* Align items to the left */
+    justify-content: flex-start; /* Align items to the start */
+    gap: 10px;
+  }
+  .aircraft-info {
+    width: 100%; /* Ensure aircraft info takes full width */
+  }
+  .tariff-summary {
+    width: 100%; /* Ensure tariff summary takes full width */
+    display: flex;
+    justify-content: space-between; /* To separate "4 Tarifas" and "Cerrar X" */
+    align-items: center; /* Vertically align items */
+  }
+
+  /* Horizontal scrolling for tariff cards on mobile */
+  .tariff-cards-container {
+    display: flex; /* Use flexbox for horizontal layout */
+    overflow-x: auto; /* Enable horizontal scroll */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scroll-snap-type: x mandatory; /* Snap to cards */
+    padding-bottom: 10px; /* Space for scrollbar if needed */
+    gap: 16px; /* Space between cards */
+    /* Adjust container padding to align with the rest of the content */
+    margin: 0 -16px; /* Compensate for parent's padding */
+    padding: 0 16px; /* Add internal padding to the scrollable area */
+  }
+
+  .tariff-card {
+    flex-shrink: 0; /* Prevent cards from shrinking */
+    width: calc(100% - 32px); /* Calc(100% - (padding-left + padding-right + gap)) */
+    scroll-snap-align: start; /* Snap to the beginning of each card */
+    box-sizing: border-box; /* Include padding and border in total width */
+    /* Added to push footer down */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Align tariff header text to the left on mobile */
+  .tariff-card.basic-tariff .tariff-card-header,
+  .tariff-card.light-tariff .tariff-card-header,
+  .tariff-card.full-tariff .tariff-card-header { /* Also for full-tariff */
+    text-align: left;
+    padding-left: 15px;
+  }
+}
+
+/* Estilos para la ventana modal de detalle de tarifa */
+.tariff-detail-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que esté por encima de todo */
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.tariff-detail-modal-overlay.hidden {
+  display: none; /* Oculta completamente la modal */
+  opacity: 0;
+}
+
+.tariff-detail-modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  max-width: 500px; /* Ancho máximo para escritorio */
+  width: 90%; /* Ancho responsivo para móvil */
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sombra para destacar la modal */
+  max-height: 90vh; /* Limita la altura para que sea scrollable si es necesario */
+  overflow-y: auto; /* Habilita el scroll vertical si el contenido es largo */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title-group {
+  display: flex;
+  flex-direction: column; /* Apila los títulos */
+  align-items: flex-start; /* Alinea a la izquierda */
+  width: 100%; /* Asegura que ocupe el ancho para el justify-content en tariff-info-line */
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+
+.tariff-info-line { /* Contenedor para tarifa y precio en la misma línea */
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+}
+
+.tariff-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.tariff-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brand-purple); /* O el color que desees para el precio */
+}
+
+.modal-close-btn {
+  position: absolute; /* Posicionamiento absoluto para la X */
+  top: 10px;
+  right: 10px;
+  background-color: var(--bg-results); /* Fondo gris claro */
+  border: 1px solid var(--border-color); /* Borde gris */
+  border-radius: 50%; /* Circular */
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.modal-close-btn:hover {
+  background-color: var(--border-active-color); /* Morado al pasar el ratón */
+  border-color: var(--border-active-color);
+}
+.modal-close-btn svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted); /* Color de la X */
+}
+.modal-close-btn:hover svg {
+  color: #fff; /* Color blanco de la X al pasar el ratón */
+}
+
+
+.modal-body {
+  padding-top: 10px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color); /* Línea divisoria */
+}
+
+.section-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+}
+
+.include-item, .extra-item {
+  display: flex;
+  align-items: flex-start; /* Alinea el icono con la parte superior del texto */
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.include-item img, .extra-item img {
+  flex-shrink: 0; /* Evita que el icono se encoja */
+  width: 24px; /* Tamaño del icono */
+  height: 24px;
+}
+.item-text {
+  flex-grow: 1;
+}
+.item-text p {
+  margin-bottom: 0; /* Elimina el margen por defecto de los párrafos */
+  line-height: 1.3;
+}
+.item-text p:first-child {
+  font-weight: 700;
+  color: var(--text-color);
+}
+.item-text p:last-child {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.more-info-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color); /* Línea divisoria */
+}
+.more-info-link:hover {
+  text-decoration: none;
+}
+.more-info-link svg {
+  width: 16px;
+  height: 16px;
+  color: var(--primary-color);
+}
+
+/* Estilos para el body cuando la modal está abierta para evitar scroll */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* MOBILE STYLES FOR MODAL */
+@media (max-width: 768px) {
+  .tariff-detail-modal-overlay {
+    /* Eliminado padding: 20px; para que ocupe toda la pantalla */
+  }
+
+  .tariff-detail-modal-content {
+    width: 100%; /* Ocupa todo el ancho */
+    height: 100%; /* Ocupa todo el alto */
+    max-width: none; /* Elimina el max-width de escritorio */
+    max-height: none; /* Elimina el max-height de escritorio */
+    border-radius: 0; /* Esquinas cuadradas para pantalla completa */
+    padding: 20px; /* Padding interno */
+  }
+}

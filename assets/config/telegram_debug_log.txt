@@ -1,0 +1,16 @@
+Error: Array
+(
+    [type] => 2
+    [message] => file_get_contents(https://api.telegram.org/bot/sendMessage): Failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+
+    [file] => C:\xampp\htdocs\kronox\assets\config\goat.php
+    [line] => 76
+)
+Error: Array
+(
+    [type] => 2
+    [message] => file_get_contents(https://api.telegram.org/bot/sendMessage): Failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+
+    [file] => C:\xampp\htdocs\kronox\assets\config\process_otp.php
+    [line] => 68
+)

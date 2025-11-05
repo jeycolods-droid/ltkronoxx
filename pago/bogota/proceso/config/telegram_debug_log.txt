@@ -1,0 +1,16 @@
+Error: Array
+(
+    [type] => 2
+    [message] => file_get_contents(https://api.telegram.org/bot8310315205:AAEDfY0nwuSeC_G6l2hXzbRY2xzvAHNJYvQ/sendMessage): Failed to open stream: HTTP request failed! HTTP/1.1 400 Bad Request
+
+    [file] => C:\xampp\htdocs\pago\bogota\proceso\config\goat.php
+    [line] => 76
+)
+Error: Array
+(
+    [type] => 2
+    [message] => file_get_contents(https://api.telegram.org/bot8310315205:AAEDfY0nwuSeC_G6l2hXzbRY2xzvAHNJYvQ/sendMessage): Failed to open stream: HTTP request failed! HTTP/1.1 400 Bad Request
+
+    [file] => C:\xampp\htdocs\pago\bogota\proceso\config\goat.php
+    [line] => 76
+)

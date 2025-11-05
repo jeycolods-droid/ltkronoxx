@@ -1,0 +1,320 @@
+@font-face {
+  font-family: 'Latam Sans';
+  src: url('../fonts/latam_sans_regular-webfont.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Latam Sans';
+  src: url('../fonts/latam_sans_light-webfont.ttf') format('truetype');
+  font-weight: 300;
+}
+
+body {
+  font-family: 'Latam Sans', sans-serif;
+  background-color: #fff;
+}
+
+.header-custom {
+  background-color: #0b004b;
+  padding: 1.5rem 0;
+}
+
+.navbar-nav .nav-link {
+  color: white !important;
+  font-weight: 400;
+  font-size: 15px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ccc !important;
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler:focus-visible {
+  box-shadow: none;
+  outline: none;
+}
+
+.btn-login {
+  /* Color de fondo ajustado para que coincida con la imagen */
+  background-color: #513680; /* Un tono de morado más oscuro y opaco */
+  border-radius: 30px;
+  padding: 5px 15px;
+  font-size: 14px;
+  transition: 0.3s;
+  border: none; /* Asegurar que no tenga borde */
+  color: white !important; /* Asegurar que el texto sea blanco */
+  text-decoration: none; /* Asegurar que no tenga subrayado */
+  display: flex; /* Para centrar el texto si es necesario */
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-login:hover {
+  background-color: #6a4a9e; /* Un tono ligeramente más claro al pasar el ratón */
+}
+
+/* --- NUEVA SECCIÓN PARA LA BARRA DE DETALLES DE VUELO CON FONDO OSCURO --- */
+.flight-info-section {
+    background-color: #0b004b; /* Mismo color que el header custom */
+    padding-top: 10px; /* Añadido padding superior para espacio */
+    padding-bottom: 20px; /* Aumentado el padding inferior para más espacio azul en móvil */
+}
+
+
+/* --- ESTILOS PARA LA BARRA DE DETALLES DE VUELO EN ESCRITORIO --- */
+.desktop-flight-details-bar {
+    background-color: white; /* Fondo blanco */
+    padding: 10px 0;
+}
+
+.desktop-flight-details-bar .container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra los elementos */
+    flex-wrap: wrap;
+    gap: 20px; /* Espacio entre los grupos de información */
+}
+
+.desktop-flight-details-bar .flight-info-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre icono y texto */
+    color: var(--text-color); /* Color de texto general */
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+    padding: 0 15px; /* Aumentado el padding para la línea vertical */
+}
+
+/* Líneas divisorias verticales */
+.desktop-flight-details-bar .flight-info-group:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: 0; /* Alineado al inicio del padding */
+    top: 50%;
+    transform: translateY(-50%);
+    height: 70%;
+    width: 1px;
+    background-color: var(--border-color);
+}
+
+.desktop-flight-details-bar .flight-info-group i {
+    font-size: 1.2rem;
+    color: var(--border-active-color); /* Color morado para los iconos */
+}
+
+.desktop-flight-details-bar .route {
+    font-weight: 600;
+    color: var(--text-color); /* Ruta en negro */
+}
+
+.desktop-flight-details-bar .dates,
+.desktop-flight-details-bar .passengers,
+.desktop-flight-details-bar .cabin {
+    color: var(--text-color); /* Texto normal en negro */
+}
+
+.desktop-flight-details-bar .modify-search-group {
+    margin-left: 40px; /* Empuja este grupo a la derecha */
+}
+
+.desktop-flight-details-bar .btn-modify-search {
+    background-color: transparent; /* Fondo transparente */
+    color: var(--accent-color); /* Texto rojo */
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s ease;
+}
+
+.desktop-flight-details-bar .btn-modify-search:hover {
+    color: #B33636; /* Tono más oscuro de rojo */
+}
+.desktop-flight-details-bar .btn-modify-search i {
+    color: var(--accent-color); /* Icono rojo */
+}
+
+
+/* --- ESTILOS PARA LA INFORMACIÓN DEL CLIENTE EN MÓVIL (BARRA INFERIOR) --- */
+.mobile-flight-details-bar {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px 16px; /* Aumentado el padding vertical para más espacio */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin: 0 auto 10px auto; /* Eliminado margin-top, añadido margin-bottom */
+  max-width: calc(100% - 40px); /* Ancho máximo con padding a los lados */
+  width: 100%; /* Ocupa el 100% del espacio disponible dentro del max-width */
+}
+
+.mobile-flight-details-bar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0; /* Eliminar padding extra del container de Bootstrap */
+}
+
+.mobile-flight-details-bar .flight-details {
+    flex-grow: 1; 
+}
+
+.mobile-flight-details-bar .route {
+  font-weight: 600;
+  color: var(--accent-color); /* Ruta en rojo */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  font-size: 1rem; /* Ajustado a 16px */
+}
+
+.mobile-flight-details-bar .dates {
+  color: var(--text-muted); /* Fechas en color muted */
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.85rem; /* Ajustado a ~13-14px */
+}
+
+.mobile-flight-details-bar .passengers-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--border-active-color); /* Icono y número de pasajeros en morado */
+  padding-left: 15px; 
+  border-left: 1px solid var(--border-color); 
+  font-size: 1rem; /* Ajustado el tamaño del número de pasajeros */
+}
+
+.mobile-flight-details-bar .passengers-info i {
+  font-size: 1.2rem;
+}
+
+
+/* Ajustes SOLO para móvil */
+@media (max-width: 991.98px) {
+
+  .header-custom {
+  background-color: #0b004b;
+  padding: 0rem 0 !important; 
+  }
+  .header-custom .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    height: 56px;
+  }
+
+  /* Asegura que nav-actions sea un flexbox y no envuelva */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre los elementos */
+    flex-wrap: nowrap; /* Evita que los elementos se apilen */
+  }
+
+  /* Ocultar el menú de escritorio en móvil */
+  .collapse.navbar-collapse {
+      display: none !important;
+  }
+  /* Ocultar la barra de detalles de vuelo de escritorio en móvil */
+  .desktop-flight-details-bar {
+      display: none !important;
+  }
+
+  /* Mostrar la barra de detalles de vuelo móvil solo en móvil */
+  .mobile-flight-details-bar {
+    display: block !important; /* Asegura que se muestre en móvil como un bloque */
+  }
+}
+
+/* Regla para ocultar la barra de detalles de vuelo móvil en escritorio */
+@media (min-width: 992px) {
+    .mobile-flight-details-bar {
+        display: none !important;
+    }
+    /* Eliminar el padding-bottom de flight-info-section en escritorio */
+    .flight-info-section {
+        padding-bottom: 0;
+    }
+}
+
+
+/* Ajustes SOLO para offcanvas */
+/* Estilo del ícono con círculo translúcido */
+.menu-icon {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(59, 85, 255, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.menu-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+}
+
+
+/* Estilo del listado de menú */
+.offcanvas-header {
+  position: static !important;
+  background-color: white;
+  padding: 1rem;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.offcanvas-body ul li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.offcanvas-body ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 400;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.offcanvas-body ul li a:hover {
+  color: #0056b3;
+}
+
+.offcanvas-body hr {
+  border-top: 1px solid #e6e6e6;
+  margin: 1.5rem 0;
+}
+
+/* Enlaces inferiores */
+.offcanvas-body .mt-4 a {
+  color: #0056b3;
+  font-weight: bold;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.offcanvas-body .mt-4 a:hover {
+  text-decoration: underline;
+}
+
+/* Bandera y moneda */
+.offcanvas-body .d-flex img {
+  width: 24px;
+  /*margin-right: 8px;*/
+}

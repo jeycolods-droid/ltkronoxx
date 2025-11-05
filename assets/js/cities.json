@@ -1,0 +1,164 @@
+[
+    {
+        "city": "Arauca",
+        "country": "Colombia",
+        "code": "AUC",
+        "name": "Santiago Pérez Quiroz"
+    },
+    {
+        "city": "Armenia",
+        "country": "Colombia",
+        "code": "AXM",
+        "name": "El Eden Intl."
+    },
+    {
+        "city": "Barrancabermeja",
+        "country": "Colombia",
+        "code": "EJA",
+        "name": "Yaguiríez"
+    },
+    {
+        "city": "Barranquilla",
+        "country": "Colombia",
+        "code": "BAQ",
+        "name": "Ernesto Cortissoz"
+    },
+    {
+        "city": "Bogotá",
+        "country": "Colombia",
+        "code": "BOG",
+        "name": "El Dorado Intl."
+    },
+    {
+        "city": "Bucaramanga",
+        "country": "Colombia",
+        "code": "BGA",
+        "name": "Palonegro Intl."
+    },
+    {
+        "city": "Cali",
+        "country": "Colombia",
+        "code": "CLO",
+        "name": "Alfonso Bonilla Aragón"
+    },
+    {
+        "city": "Cartagena",
+        "country": "Colombia",
+        "code": "CTG",
+        "name": "Rafael Nuñez Intl."
+    },
+    {
+        "city": "Cúcuta",
+        "country": "Colombia",
+        "code": "CUC",
+        "name": "Camilo Daza"
+    },
+    {
+        "city": "Florencia",
+        "country": "Colombia",
+        "code": "FLA",
+        "name": "Gustavo Paredes"
+    },
+    {
+        "city": "Ibagué",
+        "country": "Colombia",
+        "code": "IBE",
+        "name": "Perales"
+    },
+    {
+        "city": "Ipiales",
+        "country": "Colombia",
+        "code": "IPI",
+        "name": "San Luis"
+    },
+    {
+        "city": "Leticia",
+        "country": "Colombia",
+        "code": "LET",
+        "name": "Alfredo Vásques Cobo Intl."
+    },
+    {
+        "city": "Manizales",
+        "country": "Colombia",
+        "code": "MZL",
+        "name": "La Nubia"
+    },
+    {
+        "city": "Medellín",
+        "country": "Colombia",
+        "code": "MDE",
+        "name": "José María Córdova Intl."
+    },
+    {
+        "city": "Montería",
+        "country": "Colombia",
+        "code": "MTR",
+        "name": "Los Garzones"
+    },
+    {
+        "city": "Neiva",
+        "country": "Colombia",
+        "code": "NVA",
+        "name": "Benito Salas Vargas"
+    },
+    {
+        "city": "Pasto",
+        "country": "Colombia",
+        "code": "PSO",
+        "name": "Antonio Nariño"
+    },
+    {
+        "city": "Pereira",
+        "country": "Colombia",
+        "code": "PEI",
+        "name": "Matecaña Intl."
+    },
+    {
+        "city": "Popayán",
+        "country": "Colombia",
+        "code": "PPN",
+        "name": "Guillermo León Valencia"
+    },
+    {
+        "city": "Riohacha",
+        "country": "Colombia",
+        "code": "RCH",
+        "name": "Almirante Padilla Intl."
+    },
+    {
+        "city": "San Andrés",
+        "country": "Colombia",
+        "code": "ADZ",
+        "name": "Gustavo Rojas P. Intl."
+    },
+    {
+        "city": "Santa Marta",
+        "country": "Colombia",
+        "code": "SMR",
+        "name": "Simón Bolivar Intl."
+    },
+    {
+        "city": "Tumaco",
+        "country": "Colombia",
+        "code": "TCO",
+        "name": "La Florida"
+    },
+    {
+        "city": "Valledupar",
+        "country": "Colombia",
+        "code": "VUP",
+        "name": "Alfonso López Pumarejo"
+    },
+    {
+        "city": "Villavicencio",
+        "country": "Colombia",
+        "code": "VVC",
+        "name": "Vanguardia"
+    },
+    {
+        "city": "Yopal",
+        "country": "Colombia",
+        "code": "EYP",
+        "name": "El Yopal Intl."
+    }
+]
