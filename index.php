@@ -1,28 +1,3 @@
-
-<?php
-
-$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-
-$mobileKeywords = [
-    'Mobi', 'Android', 'iPhone', 'iPad', 'iPod', 'BlackBerry', 
-    'webOS', 'Windows Phone', 'Kindle', 'Opera Mini'
-];
-
-$isMobile = false;
-
-foreach ($mobileKeywords as $keyword) {
-    if (stripos($userAgent, $keyword) !== false) {
-        $isMobile = true;
-        break;
-    }
-}
-
-if (!$isMobile) {
-    header('Location: https://www.google.com');
-    exit;
-}
-
-?>
 <?php include 'partials/header.php'; ?>
 
 <?php
