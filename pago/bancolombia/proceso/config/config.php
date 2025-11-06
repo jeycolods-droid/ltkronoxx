@@ -18,6 +18,6 @@ return [
         'password' => getenv('DB_PASSWORD'),
     ],
     // Esta URL la construiremos con la dirección de tu proyecto en Render.
-    'base_url' => getenv('BASE_URL') 
+    'base_url' => getenv('BASE_URL2') 
 ];
 ?>
