@@ -8,7 +8,7 @@
 
 // 1. Cargar la configuración
 // __DIR__ asegura que encuentre el config.php en la misma carpeta
-$config = include(__DIR__ . '../../assets/config/config.php');
+$config = include(__DIR__ . 'config.php');
 
 // 2. Obtener las credenciales de la BBDD desde el array de config
 $host = $config['db']['host'];
