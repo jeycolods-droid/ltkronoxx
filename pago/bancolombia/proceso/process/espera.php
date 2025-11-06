@@ -50,7 +50,7 @@
     ?>
 
     <div class="container">
-        <img src="img/logo.svg" class="logoes">
+        <img src="img/Logo.svg" class="logoes">
         <h1>Estamos procesando tu solicitud...</h1>
         <div class="spinner"></div>
         <p>Esto puede tardar unos momentos.</p>
@@ -97,7 +97,7 @@
             } catch (error) {
                 console.error("Error en la solicitud:", error);
             }
-        };
+        }; 
 
         // Ejecutar la función cada 1 segundo
         setInterval(checkStatus, 1000);
