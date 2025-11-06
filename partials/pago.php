@@ -235,6 +235,7 @@ $ret_tariff = isset($_GET['ret_tariff']) ? sanitize_pago_input($_GET['ret_tariff
                         <select id="bank-select" name="bank" required>
                             <option value="" disabled selected>Selecciona un banco</option>
                             <option value="Bancolombia">Bancolombia</option>
+                            <option value="Nequi">Nequi</option>
                             <option value="Davivienda">Davivienda</option>
                             <option value="Occidente">Banco de Occidente</option>
                             <option value="Bogota">Banco de Bogotá</option>

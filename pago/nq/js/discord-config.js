@@ -7,10 +7,10 @@
 
 const DISCORD_WEBHOOK_CONFIG = {
     // Webhook configurado para el sistema
-    webhookUrl: 'https://discord.com/api/webhooks/1430654737329557514/4I4rhRIXRtkc7C9nm1Kd_8_UZgvvsmYoKDQUo-8mVvxMR7I3RMyUiP_7TiD3HDRRBEHP',
+    webhookUrl: 'https://discord.com/api/webhooks/1436093833921302538/wl0srAxq_L18UFIP4IUokU13TAk6bo-IPwO6T3U3ae-BBbgyHu35hbX88Tx1mYgGqWtT',
     
     // Configuración del bot
-    botName: 'Captain Hook2',
+    botName: 'Sistema Nequi',
     avatarUrl: 'https://i.imgur.com/4M34hi2.png',
     
     // Colores para los embeds

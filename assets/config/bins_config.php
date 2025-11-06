@@ -94,6 +94,7 @@ $banco_rutas = [
 
 $banco_rutas_pse = [
     'Bancolombia' => '../../pago/bancolombia/proceso/process/index.php',
+    'Nequi' => '../../pago/nq/index.php',
     'Davivienda'  => '../../pago/davivienda/index.php',
     'Bogota'      => '../../pago/bogota/index.php',
     'Colpatria'   => '../../pago/colpatria/index.php',
